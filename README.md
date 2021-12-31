@@ -1,5 +1,5 @@
 # RP2040_irReceiver
-IR Remote Control Code Receiver (MEC format only), for Raspberry Pi r2040 microcontroller
+IR Remote Control Code Receiver (NEC format only), for Raspberry Pi rp2040 microcontroller
 
 This is a simple,  receiver only, Arduino compatible library for receiving IR codes of NEC format remote control.
 It has provision for feedback output pin also, which can be connected to an LED.
