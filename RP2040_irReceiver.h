@@ -1,7 +1,8 @@
 /*
     RP2040_irReceiver.h - Library for receiving NEC IR Remote Codes for Raspberry Pi R2040 controller.
-    Created by CC Dharmani, on December 24, 2021.
+    Created by CC Dharmani  
     Released into the public domain.
+    Created: 24 Dec 2021, Last Updated: 31 Dec 2021
 */
 #ifndef RP2040_IRRECEIVER_H
 #define RP2040_IRRECEIVER_H
@@ -28,7 +29,7 @@ class RP2040_irReceiver{
         void irRxEnable(bool enable);
         /*
             Waits for the interrupt to receive the IR code (by polling the codeRceived flag),
-			Returns when valid code is received, otherwise waits here (blocking)
+            Returns when valid code is received, otherwise waits here (blocking)
         */
         void receiveCode(void);
         /*
@@ -37,7 +38,7 @@ class RP2040_irReceiver{
         void printCode(void);
         /*
             GPIO Interrupt Service Routine, it receives the IR code. validates it and
-			raises codeReceived flag (this flag needs to be cleared manually at wherever it is being used)
+            raises codeReceived flag (this flag needs to be cleared manually at wherever it is being used)
         */
         void irCallback(void);
 
