@@ -27,10 +27,8 @@ class RP2040_irReceiver{
         */
         void irRxEnable(bool enable);
         /*
-            Receives IR code, validates and decodes it into address and command
-            Returns with setting codeReceived flag high if valid code is received
-            or else returns with codeReceived = 0
-            the codeReceived flag has to be made 0 manually after it is set to 1 here
+            Waits for the interrupt to receive the IR code (by polling the codeRceived flag),
+			Returns when valid code is received, otherwise waits here (blocking)
         */
         void receiveCode(void);
         /*
@@ -38,7 +36,8 @@ class RP2040_irReceiver{
         */
         void printCode(void);
         /*
-            GPIO Interrupt Service Routine, it records the time in microseconds on GPIO falling edge
+            GPIO Interrupt Service Routine, it receives the IR code. validates it and
+			raises codeReceived flag (this flag needs to be cleared manually at wherever it is being used)
         */
         void irCallback(void);
 
