@@ -8,7 +8,7 @@ The code uses the GPIO interrupt of rp2040 controller to measure the incoming pu
 
 Example:
 <pre><code>
-#include <Arduino.h>
+#include "Arduino.h"
 #include "RP2040_irReceiver.h"
 
 //IR Receiver Pins
