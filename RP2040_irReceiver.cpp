@@ -37,54 +37,13 @@ void RP2040_irReceiver::irRxEnable(bool enable){
 }
 
 /*
-    Receives IR code, validates and decodes it into address and command
-    Returns with setting codeReceived flag high if valid code is received
-    or else returns with codeReceived = 0
-    the codeReceived flag has to be made 0 manually after it is set to 1 here
+    Waits for the interrupt to receive the IR code (by polling the codeRceived flag),
+    Returns when valid code is received, otherwise waits here (blocking)
 */
 void RP2040_irReceiver::receiveCode(void) {
-    if(irReceived){
-        timeDiff = time2 - time1;
-        if(start){
-            if(timeDiff > 1100 && timeDiff < 1200) count++;
-            else if(timeDiff > 2200 && timeDiff < 2300) { tempIrCode |= (0x80000000 >> count); count++;}
-            else {start = 0; if(feedbackEnabled) digitalWrite(_feedbackPin, 0); return;}
-            if(count >= 32){
-                irCode = tempIrCode;
-                start = 0;
-                uint8_t tempAdrs = (uint8_t)(irCode >> 24);
-                uint8_t tempCmd = (uint8_t)(irCode >> 8);
-                irAdrs = 0;
-                irCmd = 0;
-                for(int i=0; i<8; i++){
-                    if(tempAdrs & (0x01 << i)) irAdrs |= (0x80 >> i);
-                    if(tempCmd  & (0x01 << i)) irCmd  |= (0x80 >> i);
-                }
-                tempAdrs = (uint8_t)(irCode >> 16);
-                tempCmd = (uint8_t)irCode;
-                irInvAdrs = 0;
-                irInvCmd = 0;
-                for(int i=0; i<8; i++){
-                    if(tempAdrs & (0x01 << i)) irInvAdrs |= (0x80 >> i);
-                    if(tempCmd  & (0x01 << i)) irInvCmd  |= (0x80 >> i);
-                }
-                
-                if((irInvAdrs & irAdrs)==0 && (irInvCmd & irCmd)==0) codeReceived = 1;   /*Check validity of the code by comparing with inverse field in the code*/
-                if(feedbackEnabled) digitalWrite(_feedbackPin, 0);
-                return;    
-            }
-        }
-        else{
-            if(timeDiff > 13000 && timeDiff < 14000) {
-                start = 1;
-                count = 0;
-                tempIrCode = 0;
-                if(feedbackEnabled) digitalWrite(_feedbackPin, 1);
-            }
-        } 
-        time1 = time2;
-        irReceived = 0;
-    }
+    while(!codeReceived);
+    codeReceived = 0;
+    return;
 }
 
 /*
@@ -92,18 +51,57 @@ void RP2040_irReceiver::receiveCode(void) {
 */
 void RP2040_irReceiver::printCode(void) {
     char str[50];
-    while(!codeReceived) receiveCode();
+    while(!codeReceived);
     codeReceived = 0;
     sprintf(str,"IR Code:0x%08lx, Address:0x%02x, Command:0x%02x", irCode, irAdrs, irCmd);
     Serial.println(str);
 }
 
 /*
-    GPIO Interrupt Service Routine, it records the time in microseconds on GPIO falling edge
+    GPIO Interrupt Service Routine, it receives the IR code. validates it and
+    raises codeReceived flag (this flag needs to be cleared manually at wherever it is being used)
 */
 void RP2040_irReceiver::irCallback(void) {    
     time2 = micros();
-    irReceived = 1;
+    timeDiff = time2 - time1;
+    if(start){
+        if(timeDiff > 1100 && timeDiff < 1200) count++;
+        else if(timeDiff > 2200 && timeDiff < 2300) { tempIrCode |= (0x80000000 >> count); count++;}
+        else {start = 0; if(feedbackEnabled) digitalWrite(_feedbackPin, 0); return;}
+        if(count >= 32){
+            irCode = tempIrCode;
+            start = 0;
+            uint8_t tempAdrs = (uint8_t)(irCode >> 24);
+            uint8_t tempCmd = (uint8_t)(irCode >> 8);
+            irAdrs = 0;
+            irCmd = 0;
+            for(int i=0; i<8; i++){
+                if(tempAdrs & (0x01 << i)) irAdrs |= (0x80 >> i);
+                if(tempCmd  & (0x01 << i)) irCmd  |= (0x80 >> i);
+            }
+            tempAdrs = (uint8_t)(irCode >> 16);
+            tempCmd = (uint8_t)irCode;
+            irInvAdrs = 0;
+            irInvCmd = 0;
+            for(int i=0; i<8; i++){
+                if(tempAdrs & (0x01 << i)) irInvAdrs |= (0x80 >> i);
+                if(tempCmd  & (0x01 << i)) irInvCmd  |= (0x80 >> i);
+            }
+            
+            if((irInvAdrs & irAdrs)==0 && (irInvCmd & irCmd)==0) codeReceived = 1;   /*Check validity of the code by comparing with inverse field in the code*/
+            if(feedbackEnabled) digitalWrite(_feedbackPin, 0);
+            return;    
+        }
+    }
+    else{
+        if(timeDiff > 13000 && timeDiff < 14000) {
+            start = 1;
+            count = 0;
+            tempIrCode = 0;
+            if(feedbackEnabled) digitalWrite(_feedbackPin, 1);
+        }
+    } 
+    time1 = time2;
 }
 
 /*

@@ -1,4 +1,3 @@
-
 /*
     Test Code for RP2040_irReceiver Library for receiving NEC IR Remote Codes for Raspberry Pi R2040 controller.
     Created by CC Dharmani, on December 24, 2021.
@@ -7,18 +6,40 @@
 
 #include "RP2040_irReceiver.h"
 
-RP2040_irReceiver irRemote(14);
+//IR Receiver Pins
+const int irInputPin        = 14;
+const int irFeedbackLedPin  = LED1;
+
+RP2040_irReceiver irRemote(irInputPin, irFeedbackLedPin); //feedback pin is optional
 
 void setup() {
-  // put your setup code here, to run once:
   sleep_ms(1000);
   Serial.begin(115200);
   while(!Serial);
-  Serial.println("\nIR Remote Test Code:");
+  Serial.println("\nIR Remote Test Code:\n");
   irRemote.irRxEnable(true);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  irRemote.printCode();
+  //#1: the following will receive and print the code on serial terminal (blocking function)  
+  irRemote.printCode(); 
+  
+
+  //#2: OR following lines can be used 
+  /*
+  irRemote.receiveCode();     //this is also blocking function
+  char str[50];
+  sprintf(str,"IR Code:0x%08lx, Address:0x%02x, Command:0x%02x", irRemote.irCode, irRemote.irAdrs, irRemote.irCmd);
+  Serial.println(str);
+  */
+
+  //#3: OR following lines can be used for non blocking requirement
+  /*
+  if(irRemote.codeReceived){
+    char str[50];
+    sprintf(str,"IR Code:0x%08lx, Address:0x%02x, Command:0x%02x", irRemote.irCode, irRemote.irAdrs, irRemote.irCmd);
+    Serial.println(str);
+    irRemote.codeReceived = 0;
+  }
+  */
 }

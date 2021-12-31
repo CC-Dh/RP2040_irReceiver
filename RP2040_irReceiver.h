@@ -10,9 +10,9 @@
 
 class RP2040_irReceiver{
     public:
-        uint32_t irCode;        /* this is 32 bit IR Code as received bit-by-bit on the GPIO pin */
-        bool codeReceived=0;    /* this flag is set when a valid code is received, must be cleared manually */
-        uint8_t irCmd, irInvCmd, irAdrs, irInvAdrs;  /* this variables contain decoded data from the IR code, with bits rearranged (for correct MSB-LSB order) */
+        volatile uint32_t irCode;        /* this is 32 bit IR Code as received bit-by-bit on the GPIO pin */
+        volatile bool codeReceived=0;    /* this flag is set when a valid code is received, must be cleared manually */
+        volatile uint8_t irCmd, irInvCmd, irAdrs, irInvAdrs;  /* this variables contain decoded data from the IR code, with bits rearranged (for correct MSB-LSB order) */
 
         /*
             Initiate the irReceiver Object, with a GPIO pin for IR input
@@ -44,9 +44,11 @@ class RP2040_irReceiver{
 
     private:
         int _pin, _feedbackPin;
-        int count=0;
-        bool irReceived = 0, start = 0, feedbackEnabled = 0;
-        uint32_t time1=0, time2=0, tempIrCode=0, timeDiff;
+        bool feedbackEnabled = 0;
+        volatile int count=0;
+        volatile bool start = 0; 
+        volatile uint32_t time1 = 0, time2=0, tempIrCode=0; 
+        uint32_t timeDiff;
 };
 
 /*
