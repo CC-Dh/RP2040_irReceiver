@@ -1,7 +1,8 @@
 /*
     Test Code for RP2040_irReceiver Library for receiving NEC IR Remote Codes for Raspberry Pi R2040 controller.
-    Created by CC Dharmani, on December 24, 2021.
+    Created by CC Dharmani  
     Released into the public domain.
+    Created: 24 Dec 2021, Last Updated: 31 Dec 2021
 */
 
 #include "RP2040_irReceiver.h"
