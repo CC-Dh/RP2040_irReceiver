@@ -2,18 +2,20 @@
     Test Code for irReceiver Library for receiving NEC IR Remote Codes.
     Created by CC Dharmani  
     Released into the public domain.
-    Created: 24 Dec 2021, Last Update: 31 Dec 2021
-*/
+    Created: 24 Dec 2021, Last Update: 30 Jan 2022
+*/ 
 #include "irReceiver.h"
 
 //IR Receiver Pins
-const int irInputPin        = 14;
-const int irFeedbackLedPin  = LED1;
+//For Arduino Uno, use pin 2 or 3 (interrupt pins)
+//For Pi Pico, use any digital I/O pin
+const int irInputPin        = 2;
+const int irFeedbackLedPin  = LED_BUILTIN;
 
 irReceiver irRemote(irInputPin, irFeedbackLedPin); //feedback pin is optional
 
 void setup() {
-  sleep_ms(1000);
+  delay(1000);
   Serial.begin(115200);
   while(!Serial);
   Serial.println("\nIR Remote Test Code:\n");
@@ -24,7 +26,6 @@ void loop() {
   //#1: the following will receive and print the code on serial terminal (blocking function)  
   irRemote.printCode(); 
   
-
   //#2: OR following lines can be used 
   /*
   irRemote.receiveCode();     //this is also blocking function
