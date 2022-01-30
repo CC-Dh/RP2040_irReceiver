@@ -1,21 +1,21 @@
-# RP2040_irReceiver
-IR Remote Control Code Receiver (NEC format only), for Raspberry Pi rp2040 microcontroller
+# irReceiver
+IR Remote Control Code Receiver (NEC format only), for Arduino (tested on Raspberry Pi rp2040 microcontroller)
 
 This is a simple,  receiver only, Arduino compatible library for receiving IR codes of NEC format remote control.
 It has provision for feedback output pin also, which can be connected to an LED.
 
-The code uses the GPIO interrupt of rp2040 controller to measure the incoming pulses from IR receiver (for example, TSOP1738), tested on Pi Pico board.
+The code uses the GPIO interrupt of Arduino to measure the incoming pulses from IR receiver (for example, TSOP1738), tested on Pi Pico board.
 
 Example:
 <pre><code>
 #include "Arduino.h"
-#include "RP2040_irReceiver.h"
+#include "irReceiver.h"
 
 //IR Receiver Pins
 const int irInputPin        = 14;
 const int irFeedbackLedPin  = LED1;
 
-RP2040_irReceiver irRemote(irInputPin, irFeedbackLedPin); //feedback pin is optional
+irReceiver irRemote(irInputPin, irFeedbackLedPin); //feedback pin is optional
 
 void setup() {
   sleep_ms(1000);
