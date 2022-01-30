@@ -15,9 +15,9 @@ const int irFeedbackLedPin  = LED_BUILTIN;
 irReceiver irRemote(irInputPin, irFeedbackLedPin); //feedback pin is optional
 
 void setup() {
-  delay(1000);
   Serial.begin(115200);
   while(!Serial);
+  delay(1000);
   Serial.println("\nIR Remote Test Code:\n");
   irRemote.irRxEnable(true);
 }
