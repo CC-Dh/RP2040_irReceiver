@@ -6,7 +6,7 @@
 # Datatypes (KEYWORD1)
 #######################################
 
-RP2040_irReceiver	KEYWORD1
+irReceiver		KEYWORD1
 irCode			KEYWORD1
 irCmd			KEYWORD1
 irAdrs			KEYWORD1

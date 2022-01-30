@@ -1,18 +1,19 @@
 /*
     RP2040_irReceiver.h - Library for receiving NEC IR Remote Codes for Raspberry Pi R2040 controller.
-    Created by CC Dharmani, on December 24, 2021.
+    Created by CC Dharmani  
     Released into the public domain.
+    Created: 24 Dec 2021, Last Update: 31 Dec 2021
 */
 
 #include <Arduino.h>
-#include "RP2040_irReceiver.h"
+#include "irReceiver.h"
 
-RP2040_irReceiver *irRxPointer;     /*declaring class pointer for handling interrupt from class function*/
+irReceiver *irRxPointer;     /*declaring class pointer for handling interrupt from class function*/
 
 /*
     Initiate the irReceiver Object, with a GPIO pin for IR input
 */
-RP2040_irReceiver::RP2040_irReceiver(int pin){
+irReceiver::irReceiver(int pin){
     _pin = pin;
     irRxPointer = this; /*assign current instance to pointer*/
 }
@@ -20,7 +21,7 @@ RP2040_irReceiver::RP2040_irReceiver(int pin){
 /*
     Initiate the irReceiver Object, with GPIO pins for IR input and feedback output (can be connected to an LED)
 */
-RP2040_irReceiver::RP2040_irReceiver(int pin, int feedbackPin){
+irReceiver::irReceiver(int pin, int feedbackPin){
     _pin = pin;
     _feedbackPin = feedbackPin;
     feedbackEnabled = 1;
@@ -31,7 +32,7 @@ RP2040_irReceiver::RP2040_irReceiver(int pin, int feedbackPin){
 /*
     Enable the IR Receiver (this enables the GPIO interrupt on the IR Receive Pin).
 */
-void RP2040_irReceiver::irRxEnable(bool enable){
+void irReceiver::irRxEnable(bool enable){
     if(enable) attachInterrupt(digitalPinToInterrupt(_pin), irCallbackProxy, FALLING);
     else detachInterrupt(digitalPinToInterrupt(_pin));
 }
@@ -40,7 +41,7 @@ void RP2040_irReceiver::irRxEnable(bool enable){
     Waits for the interrupt to receive the IR code (by polling the codeRceived flag),
     Returns when valid code is received, otherwise waits here (blocking)
 */
-void RP2040_irReceiver::receiveCode(void) {
+void irReceiver::receiveCode(void) {
     while(!codeReceived);
     codeReceived = 0;
     return;
@@ -49,7 +50,7 @@ void RP2040_irReceiver::receiveCode(void) {
 /*
     Receives IR code and prints it on serial terminal (this is a blocking function, it will not return untill a valid code is received)
 */
-void RP2040_irReceiver::printCode(void) {
+void irReceiver::printCode(void) {
     char str[50];
     while(!codeReceived);
     codeReceived = 0;
@@ -61,7 +62,7 @@ void RP2040_irReceiver::printCode(void) {
     GPIO Interrupt Service Routine, it receives the IR code. validates it and
     raises codeReceived flag (this flag needs to be cleared manually at wherever it is being used)
 */
-void RP2040_irReceiver::irCallback(void) {    
+void irReceiver::irCallback(void) {    
     time2 = micros();
     timeDiff = time2 - time1;
     if(start){

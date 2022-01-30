@@ -1,15 +1,15 @@
 /*
-    RP2040_irReceiver.h - Library for receiving NEC IR Remote Codes for Raspberry Pi R2040 controller.
+    irReceiver.h - Library for receiving NEC IR Remote Codes on Arduino.
     Created by CC Dharmani  
     Released into the public domain.
     Created: 24 Dec 2021, Last Updated: 31 Dec 2021
 */
-#ifndef RP2040_IRRECEIVER_H
-#define RP2040_IRRECEIVER_H
+#ifndef _IRRECEIVER_H
+#define _IRRECEIVER_H
 
 #include <Arduino.h>
 
-class RP2040_irReceiver{
+class irReceiver{
     public:
         volatile uint32_t irCode;        /* this is 32 bit IR Code as received bit-by-bit on the GPIO pin */
         volatile bool codeReceived=0;    /* this flag is set when a valid code is received, must be cleared manually */
@@ -18,11 +18,11 @@ class RP2040_irReceiver{
         /*
             Initiate the irReceiver Object, with a GPIO pin for IR input
         */
-        RP2040_irReceiver(int pin);
+        irReceiver(int pin);
         /*
             Initiate the irReceiver Object, with GPIO pins for IR input and feedback output (can be connected to an LED)
         */
-        RP2040_irReceiver(int pin, int feedbackPin);
+        irReceiver(int pin, int feedbackPin);
         /*
             Enable the IR Receiver (this enables the GPIO interrupt on the IR Receive Pin).
         */
